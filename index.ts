@@ -63,6 +63,7 @@ async function run(): Promise<any> {
             type: record.type,
             name: record.name,
             value: record.value,
+            ttl: record.ttl,
           }));
 
           break;
@@ -74,6 +75,12 @@ async function run(): Promise<any> {
           break;
         case ECliConfigMode.Update:
           managerResponse = await manager.update(cliConfig.recordId, cliConfig.updateData);
+
+          result = managerResponse;
+
+          break;
+        case ECliConfigMode.Create:
+          managerResponse = await manager.create(cliConfig.recordId, cliConfig.updateData);
 
           result = managerResponse;
 
@@ -91,7 +98,7 @@ async function run(): Promise<any> {
 }
 
 run().then((result) => {
-  console.log(result);
+  console.log(JSON.stringify(result));
   process.exit(0);
 }).catch((err) => {
   console.log(err.message);
