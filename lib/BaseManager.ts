@@ -93,6 +93,21 @@ class BaseManager {
     return response;
   }
 
+  protected async post(urlString: string, payload: IKeyValue): Promise<any> {
+    const url = new URL(urlString);
+
+    const apiRequest = this.buildRequestObject({
+      httpMethod: 'POST',
+      url: url.toString(),
+      stringifiedPayload: JSON.stringify(payload),
+    });
+
+    const apiResponse = await fetch(apiRequest);
+    const response = await this.processApiResponse(urlString, apiResponse);
+
+    return response;
+  }
+
   protected validate(urlString: string, response: any, validator: any): void {
     const validationResults = validator.validate(response);
     if (!validationResults.valid) {

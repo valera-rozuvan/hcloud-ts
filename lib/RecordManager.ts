@@ -95,6 +95,13 @@ class RecordManager extends BaseManager {
     this.validate(urlString, response, GetRecordResponse);
     return response.record as IRecord;
   }
+
+  public async create(recordID: string, payload: IKeyValue): Promise<IRecord> {
+    const urlString = 'https://dns.hetzner.com/api/v1/records';
+    const response = await this.post(urlString, payload);
+    this.validate(urlString, response, GetRecordResponse);
+    return response.record as IRecord;
+  }
 }
 
 export { RecordManager };
