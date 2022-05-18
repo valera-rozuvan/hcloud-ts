@@ -1,29 +1,47 @@
-const { attributes } = require('structure');
-
 import { BaseManager } from './BaseManager';
 
-const ZoneEntity = attributes({
+const { attributes } = require('structure');
+
+const ZoneEntityTxtVerification = attributes({
+  name: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+  token: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+})(class ZoneEntityTxtVerification {
+});
+
+const ZoneEntityZoneType = attributes({
   id: {
     type: String,
     required: true,
-  },
-  type: {
-    type: String,
-    required: true,
+    empty: true,
   },
   name: {
     type: String,
     required: true,
+    empty: true,
   },
-  value: {
+  description: {
     type: String,
     required: true,
+    empty: true,
   },
-  ttl: {
-    type: Number,
-    required: false,
+  prices: {
+    type: Object,
+    required: true,
+    nullable: true,
   },
-  zone_id: {
+})(class ZoneEntityZoneType {
+});
+
+const ZoneEntity = attributes({
+  id: {
     type: String,
     required: true,
   },
@@ -35,21 +53,148 @@ const ZoneEntity = attributes({
     type: String,
     required: true,
   },
+  legacy_dns_host: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+  legacy_ns: {
+    type: Array,
+    itemType: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  ns: {
+    type: Array,
+    itemType: String,
+    required: true,
+  },
+  owner: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+  paused: {
+    type: Boolean,
+    required: true,
+  },
+  permission: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+  project: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+  registrar: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+  status: {
+    type: String,
+    required: true,
+  },
+  ttl: {
+    type: Number,
+    required: true,
+  },
+  verified: {
+    type: String,
+    required: true,
+    empty: true,
+  },
+  records_count: {
+    type: Number,
+    required: true,
+  },
+  is_secondary_dns: {
+    type: Boolean,
+    required: true,
+  },
+  txt_verification: {
+    type: ZoneEntityTxtVerification,
+    required: true,
+  },
+  zone_type: {
+    type: ZoneEntityZoneType,
+    required: true,
+  },
 })(class ZoneEntity {
 });
 
+const ZonesResponseMetaPagination = attributes({
+  page: {
+    type: Number,
+    required: true,
+  },
+  per_page: {
+    type: Number,
+    required: true,
+  },
+  previous_page: {
+    type: Number,
+    required: true,
+  },
+  next_page: {
+    type: Number,
+    required: true,
+  },
+  last_page: {
+    type: Number,
+    required: true,
+  },
+  total_entries: {
+    type: Number,
+    required: true,
+  },
+})(class ZonesResponseMetaPagination {
+});
+
+const ZonesResponseMeta = attributes({
+  pagination: {
+    type: ZonesResponseMetaPagination,
+    required: true,
+  },
+})(class ZonesResponseMeta {
+});
+
 const GetZonesResponse = attributes({
-  records: {
+  zones: {
     type: Array,
     itemType: ZoneEntity,
+    required: true,
+  },
+  meta: {
+    type: ZonesResponseMeta,
     required: true,
   },
 })(class GetZonesResponse {
 });
 
+const GetZoneResponse = attributes({
+  zone: {
+    type: ZoneEntity,
+    required: true,
+  },
+})(class GetZoneResponse {
+});
+
 interface IZoneTextVerification {
   name: string;
   token: string;
+}
+
+interface IZoneZoneType {
+  id: string;
+  name: string;
+  description: string;
+  prices: any | null;
 }
 
 interface IZone {
@@ -71,11 +216,14 @@ interface IZone {
   records_count: number;
   is_secondary_dns: boolean;
   txt_verification: IZoneTextVerification;
+  zone_type: IZoneZoneType;
 }
 
 interface IZonesResponseMetaPagination {
   page: number;
   per_page: number;
+  previous_page: number;
+  next_page: number;
   last_page: number;
   total_entries: number;
 }
@@ -95,15 +243,17 @@ class ZoneManager extends BaseManager {
   }
 
   public async getAll(): Promise<IZonesResponse> {
-    const urlString = `https://dns.hetzner.com/api/v1/zones`;
+    const urlString = 'https://dns.hetzner.com/api/v1/zones';
     const response = await this.get(urlString);
-
-    const validationResults = GetZonesResponse.validate(response);
-    if (!validationResults.valid) {
-      throw new Error(`API '${urlString}' returned an unexpected payload; errors from validation are '${JSON.stringify(validationResults.errors)}'`);
-    }
-
+    this.validate(urlString, response, GetZonesResponse);
     return response as IZonesResponse;
+  }
+
+  public async getOne(zoneId: string): Promise<IZone> {
+    const urlString = `https://dns.hetzner.com/api/v1/zones/${zoneId}`;
+    const response = await this.get(urlString);
+    this.validate(urlString, response, GetZoneResponse);
+    return response as IZone;
   }
 }
 

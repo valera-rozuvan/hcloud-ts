@@ -1,6 +1,7 @@
-const { attributes } = require('structure');
-
 import { BaseManager } from './BaseManager';
+import { IKeyValue } from '../types';
+
+const { attributes } = require('structure');
 
 const RecordEntity = attributes({
   id: {
@@ -72,42 +73,27 @@ class RecordManager extends BaseManager {
     super(apiToken);
   }
 
-  public async getRecords(zoneId: string): Promise<IRecordsResponse> {
+  public async getAll(zoneId: string): Promise<IRecordsResponse> {
     const urlString = `https://dns.hetzner.com/api/v1/records?zone_id=${zoneId}`;
     const response = await this.get(urlString);
-
-    const validationResults = GetRecordsResponse.validate(response);
-    if (!validationResults.valid) {
-      throw new Error(`API '${urlString}' returned an unexpected payload; errors from validation are '${JSON.stringify(validationResults.errors)}'`);
-    }
-
+    this.validate(urlString, response, GetRecordsResponse);
     return response as IRecordsResponse;
   }
 
-  public async getRecord(recordID: string): Promise<IRecord> {
+  public async getOne(recordID: string): Promise<IRecord> {
     const urlString = `https://dns.hetzner.com/api/v1/records/${recordID}`;
     const response = await this.get(urlString);
-
-    const validationResults = GetRecordResponse.validate(response);
-    if (!validationResults.valid) {
-      throw new Error(`API '${urlString}' returned an unexpected payload; errors from validation are '${JSON.stringify(validationResults.errors)}'`);
-    }
-
+    this.validate(urlString, response, GetRecordResponse);
     return response.record as IRecord;
   }
 
-  public async findRecordByName(zoneId: string, name: string): Promise<IRecord | null> {
-    const allRecords = await this.getRecords(zoneId);
+  public async update(recordID: string, payload: IKeyValue): Promise<IRecord> {
+    const record = await this.getOne(recordID);
 
-    const foundRecord = allRecords.records.filter((record) => {
-      return record.name === name;
-    });
-
-    if (foundRecord && foundRecord.length === 1) {
-      return foundRecord[0];
-    } else {
-      return null;
-    }
+    const urlString = `https://dns.hetzner.com/api/v1/records/${recordID}`;
+    const response = await this.put(urlString, { ...record, ...payload });
+    this.validate(urlString, response, GetRecordResponse);
+    return response.record as IRecord;
   }
 }
 

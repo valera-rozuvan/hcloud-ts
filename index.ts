@@ -1,31 +1,49 @@
-import { ZoneManager } from './lib'
-import { setConfigApiToken, setConfigEntity, setConfigMode } from './utils';
+import { RecordManager, ZoneManager } from './lib';
+import {
+  setConfigApiToken, setConfigEntity, setConfigMode, setConfigZoneId, setConfigRecordId, setConfigUpdateData,
+} from './utils';
 import { ECliConfigEntity, ECliConfigMode, ICliConfig } from './types';
 
-async function run() {
+async function run(): Promise<any> {
   const cliConfig: ICliConfig = {
     apiToken: '',
     entity: null,
     mode: null,
+    zoneId: '',
+    recordId: '',
+    updateData: {},
   };
 
   setConfigApiToken(process.env, cliConfig);
   setConfigEntity(process.argv, cliConfig);
   setConfigMode(process.argv, cliConfig);
+  setConfigZoneId(process.argv, cliConfig);
+  setConfigRecordId(process.argv, cliConfig);
+  setConfigUpdateData(process.argv, cliConfig);
 
-  let results = null;
+  let manager;
+  let managerResponse;
+  let result;
 
   switch (cliConfig.entity) {
     case ECliConfigEntity.Zone:
-      console.log(`We are working with 'Zones'.`);
-
-      const zoneManager = new ZoneManager(cliConfig.apiToken);
+      manager = new ZoneManager(cliConfig.apiToken);
 
       switch (cliConfig.mode) {
         case ECliConfigMode.GetAll:
-          console.log(`We will perform a 'getAll' operation.`);
+          managerResponse = await manager.getAll();
 
-          results = await zoneManager.getAll();
+          result = managerResponse.zones.map((zone) => ({
+            id: zone.id,
+            name: zone.name,
+          }));
+
+          break;
+        case ECliConfigMode.GetOne:
+          managerResponse = await manager.getOne(cliConfig.zoneId);
+
+          result = managerResponse;
+
           break;
         default:
           break;
@@ -33,36 +51,49 @@ async function run() {
 
       break;
     case ECliConfigEntity.Record:
-      console.log('We are working with "Records".');
+      manager = new RecordManager(cliConfig.apiToken);
+
+      switch (cliConfig.mode) {
+        case ECliConfigMode.GetAll:
+
+          managerResponse = await manager.getAll(cliConfig.zoneId);
+
+          result = managerResponse.records.map((record) => ({
+            id: record.id,
+            type: record.type,
+            name: record.name,
+            value: record.value,
+          }));
+
+          break;
+        case ECliConfigMode.GetOne:
+          managerResponse = await manager.getOne(cliConfig.recordId);
+
+          result = managerResponse;
+
+          break;
+        case ECliConfigMode.Update:
+          managerResponse = await manager.update(cliConfig.recordId, cliConfig.updateData);
+
+          result = managerResponse;
+
+          break;
+        default:
+          break;
+      }
+
+      break;
+    default:
       break;
   }
 
-  return results;
+  return result;
 }
 
-run().then((results) => {
-  console.log(results);
+run().then((result) => {
+  console.log(result);
+  process.exit(0);
+}).catch((err) => {
+  console.log(err.message);
+  process.exit(1);
 });
-
-// dnsRecordManager.findRecordByName(recordNameToFind)
-//   .then(async (foundRecord) => {
-//     if (foundRecord) {
-//       const recordId = foundRecord.id;
-//       console.log(`Found a record with name '${recordNameToFind}'. Record ID is '${recordId}'; Will try to retrieve the record by it's ID.`);
-//
-//       let record;
-//       try {
-//         record = await dnsRecordManager.getRecord(recordId);
-//       } catch (err) {
-//         console.log(err);
-//         return;
-//       }
-//
-//       console.log(record);
-//     } else {
-//       console.log(`Record with name '${recordNameToFind}' not found!`);
-//     }
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });

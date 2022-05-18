@@ -7,15 +7,25 @@ enum ECliConfigMode {
   GetAll = 'GET_ALL',
   GetOne = 'GET_ONE',
   Update = 'UPDATE',
+  Create = 'CREATE',
+}
+
+interface IKeyValue {
+  [key: string]: string | number | boolean | null;
 }
 
 interface ICliConfig {
   apiToken: string;
   entity: ECliConfigEntity | null;
   mode: ECliConfigMode | null;
+  zoneId: string;
+  recordId: string;
+  updateData: IKeyValue;
 }
+
 export {
   ECliConfigEntity,
   ECliConfigMode,
+  IKeyValue,
   ICliConfig,
 };

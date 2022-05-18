@@ -4,8 +4,7 @@ function setConfigApiToken(env: { [key: string]: string | undefined; }, cliConfi
   const apiToken = env.API_TOKEN;
 
   if (typeof apiToken !== 'string' || apiToken.length === 0) {
-    console.error("Please provide ENV variable 'API_TOKEN'.");
-    process.exit(1);
+    throw new Error('Please provide ENV variable \'API_TOKEN\'.');
   }
 
   cliConfig.apiToken = apiToken;

@@ -1,6 +1,7 @@
 import {
   ECliConfigEntity,
   ECliConfigMode,
+  IKeyValue,
   ICliConfig,
 } from './cliConfig';
 
@@ -11,6 +12,7 @@ import {
 export {
   ECliConfigEntity,
   ECliConfigMode,
+  IKeyValue,
   ICliConfig,
 
   ApiCallOptions,
