@@ -1,8 +1,8 @@
-# htz-dns-manager
+# hcloud-ts
 
-HTZ DNS manager
+a TypeScript library for the Hetzner Cloud API
 
-## Prerequisites
+## prerequisites
 
 You need ENV variable `API_TOKEN` set. You can do so:
 
@@ -12,7 +12,7 @@ export API_TOKEN="8try83ru3908ru329r32ur390ru"
 
 Where `8try83ru3908ru329r32ur390ru` is the value of `API_TOKEN`.
 
-## Arguments
+## arguments
 
 Available arguments for the CLI:
 
@@ -24,6 +24,7 @@ Available arguments for the CLI:
 --get-one  -  get one item (based on ID provided)
 --update   -  update an item
 --create   -  create a new item
+--delete   -  delete an item
 
 --record-id  -  ID of the record to get/update/delete
 --zone-id    -  ID of the zone to get/update/delete
@@ -43,7 +44,7 @@ Available arguments for the CLI:
 --set-value "Hello, world!"
 ```
 
-## Example invocation
+## example invocation
 
 Example of how to run the CLI:
 
@@ -51,6 +52,20 @@ Example of how to run the CLI:
 npx ts-node ./index.ts --record --update --record-id fc249227f4ae170dafa99394971da92b --set-name 'orgid-v2'
 ```
 
-## License
+---
 
-This project is licensed under the MIT License. See [LICENSE](./LICENSE) for more details.
+## license
+
+The project `'hcloud-ts'` is licensed under the MIT License.
+
+See [LICENSE](./LICENSE) for more details.
+
+The latest source code can be retrieved from one of several mirrors:
+
+1. [github.com/valera-rozuvan/hcloud-ts](https://github.com/valera-rozuvan/hcloud-ts)
+
+2. [gitlab.com/valera-rozuvan/hcloud-ts](https://gitlab.com/valera-rozuvan/hcloud-ts)
+
+3. [git.rozuvan.net/hcloud-ts](https://git.rozuvan.net/hcloud-ts)
+
+Copyright (c) 2022-2023 [Valera Rozuvan](https://valera.rozuvan.net/)
