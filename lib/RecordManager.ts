@@ -40,8 +40,24 @@ const RecordEntity = attributes({
 });
 
 const GetRecordResponse = attributes({
-  record: RecordEntity,
+  record: {
+    type: RecordEntity,
+    required: true,
+  },
 })(class GetRecordResponse {
+});
+
+const EmptyObject = attributes({
+
+})(class EmptyObject {
+});
+
+const DeleteRecordResponse = attributes({
+  error: {
+    type: EmptyObject,
+    required: true,
+  },
+})(class DeleteRecordResponse {
 });
 
 const GetRecordsResponse = attributes({
@@ -101,6 +117,12 @@ class RecordManager extends BaseManager {
     const response = await this.post(urlString, payload);
     this.validate(urlString, response, GetRecordResponse);
     return response.record as IRecord;
+  }
+
+  public async remove(recordID: string): Promise<void> {
+    const urlString = `https://dns.hetzner.com/api/v1/records/${recordID}`;
+    const response = await this.delete(urlString);
+    this.validate(urlString, response, DeleteRecordResponse);
   }
 }
 

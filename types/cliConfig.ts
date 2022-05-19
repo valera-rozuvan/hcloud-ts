@@ -8,6 +8,7 @@ enum ECliConfigMode {
   GetOne = 'GET_ONE',
   Update = 'UPDATE',
   Create = 'CREATE',
+  Delete = 'DELETE',
 }
 
 interface IKeyValue {

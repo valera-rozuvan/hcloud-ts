@@ -85,6 +85,12 @@ async function run(): Promise<any> {
           result = managerResponse;
 
           break;
+        case ECliConfigMode.Delete:
+          managerResponse = await manager.remove(cliConfig.recordId);
+
+          result = managerResponse;
+
+          break;
         default:
           break;
       }
