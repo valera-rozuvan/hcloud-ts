@@ -13,10 +13,28 @@ class BaseManager {
   }
 
   private async processApiResponse(urlString: string, apiResponse: Response): Promise<any> {
-    if (![200, 201, 404].includes(apiResponse.status)) {
+    /*
+     * Expected statuses, as returned by Hetzner API:
+     *
+     *  - 200: Successful response
+     *  - 201: Created
+     *  - 400: Pagination selectors are mutually exclusive
+     *  - 401: Unauthorized
+     *  - 403: Forbidden
+     *  - 404: Not found
+     *  - 406: Not acceptable
+     *  - 409: Conflict
+     *  - 422: Unprocessable entity
+     *
+     * If we get some other status code, this is an error.
+     */
+    if (![200, 201, 400, 401, 403, 404, 406, 409, 422].includes(apiResponse.status)) {
       throw new Error(
-        `Unexpected response status while calling API '${urlString}'; `
-        + `'${JSON.stringify({ status: apiResponse.status, statusText: apiResponse.statusText })}'`,
+        'Unexpected response status while calling API; '
+        + `urlString is '${urlString}'; `
+        + `status is '${apiResponse.status}'; `
+        + `statusText is '${apiResponse.statusText}'; `
+        + `apiResponse is '${JSON.stringify(apiResponse)}'`,
       );
     }
 
@@ -25,14 +43,20 @@ class BaseManager {
       response = await apiResponse.json();
     } catch (err) {
       throw new Error(
-        `Unexpected error while parsing API response '${urlString}'; `
+        'Unexpected error while parsing API response; '
+        + `urlString is '${urlString}'; `
+        + `status is '${apiResponse.status}'; `
+        + `statusText is '${apiResponse.statusText}'; `
         + `apiResponse is '${JSON.stringify(apiResponse)}'`,
       );
     }
 
-    if (response.error) {
+    if (response.error && (response.error.message || response.error.code)) {
       throw new Error(
-        `API '${urlString}' returned an error; `
+        'API response contains an error payload; '
+        + `urlString is '${urlString}'; `
+        + `status is '${apiResponse.status}'; `
+        + `statusText is '${apiResponse.statusText}'; `
         + `the error payload is '${JSON.stringify(response.error)}'.`,
       );
     }
@@ -100,6 +124,20 @@ class BaseManager {
       httpMethod: 'POST',
       url: url.toString(),
       stringifiedPayload: JSON.stringify(payload),
+    });
+
+    const apiResponse = await fetch(apiRequest);
+    const response = await this.processApiResponse(urlString, apiResponse);
+
+    return response;
+  }
+
+  protected async delete(urlString: string): Promise<any> {
+    const url = new URL(urlString);
+
+    const apiRequest = this.buildRequestObject({
+      httpMethod: 'DELETE',
+      url: url.toString(),
     });
 
     const apiResponse = await fetch(apiRequest);

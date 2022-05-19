@@ -5,6 +5,7 @@ function setConfigMode(argv: Array<string>, cliConfig: ICliConfig) {
   let getOneFlagCount = 0;
   let createFlagCount = 0;
   let updateFlagCount = 0;
+  let deleteFlagCount = 0;
 
   argv.forEach((argument) => {
     switch (argument) {
@@ -20,17 +21,36 @@ function setConfigMode(argv: Array<string>, cliConfig: ICliConfig) {
       case '--update':
         updateFlagCount += 1;
         break;
+      case '--delete':
+        deleteFlagCount += 1;
+        break;
       default:
         break;
     }
   });
 
-  if (getAllFlagCount + getOneFlagCount + createFlagCount + updateFlagCount > 1) {
-    throw new Error('Only one of \'--get-all\', \'--get-one\', or \'--update\' arguments can be specified. Can\'t specify multiple.');
+  if (getAllFlagCount + getOneFlagCount + createFlagCount + updateFlagCount + deleteFlagCount > 1) {
+    throw new Error(
+      'Only one of '
+      + '\'--get-all\', '
+      + '\'--get-one\', '
+      + '\'--create\', '
+      + '\'--update\', or '
+      + '\'--delete\' '
+      + 'arguments can be specified. Can\'t specify multiple.',
+    );
   }
 
-  if (getAllFlagCount + getOneFlagCount + createFlagCount + updateFlagCount === 0) {
-    throw new Error('Please specify either \'--get-all\', \'--get-one\', or \'--update\' argument.');
+  if (getAllFlagCount + getOneFlagCount + createFlagCount + updateFlagCount + deleteFlagCount === 0) {
+    throw new Error(
+      'Please specify either '
+      + '\'--get-all\', '
+      + '\'--get-one\', '
+      + '\'--create\', '
+      + '\'--update\', or '
+      + '\'--delete\' '
+      + 'argument.',
+    );
   }
 
   if (getAllFlagCount === 1) {
@@ -41,6 +61,8 @@ function setConfigMode(argv: Array<string>, cliConfig: ICliConfig) {
     cliConfig.mode = ECliConfigMode.Create;
   } else if (updateFlagCount === 1) {
     cliConfig.mode = ECliConfigMode.Update;
+  } else if (deleteFlagCount === 1) {
+    cliConfig.mode = ECliConfigMode.Delete;
   }
 }
 
