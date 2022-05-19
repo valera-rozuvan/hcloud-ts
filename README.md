@@ -24,6 +24,7 @@ Available arguments for the CLI:
 --get-one  -  get one item (based on ID provided)
 --update   -  update an item
 --create   -  create a new item
+--delete   -  delete an item
 
 --record-id  -  ID of the record to get/update/delete
 --zone-id    -  ID of the zone to get/update/delete
