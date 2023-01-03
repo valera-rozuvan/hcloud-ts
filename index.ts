@@ -80,7 +80,7 @@ async function run(): Promise<any> {
 
           break;
         case ECliConfigMode.Create:
-          managerResponse = await manager.create(cliConfig.recordId, cliConfig.updateData);
+          managerResponse = await manager.create(cliConfig.updateData);
 
           result = managerResponse;
 

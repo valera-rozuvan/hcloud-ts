@@ -12,7 +12,7 @@ class BaseManager {
     this.apiToken = apiToken;
   }
 
-  private async processApiResponse(urlString: string, apiResponse: Response): Promise<any> {
+  private async processApiResponse<T>(urlString: string, apiResponse: Response): Promise<T> {
     /*
      * Expected statuses, as returned by Hetzner API:
      *
@@ -61,7 +61,7 @@ class BaseManager {
       );
     }
 
-    return response;
+    return response as T;
   }
 
   private buildRequestHeaders(): HeadersInit {
@@ -88,7 +88,7 @@ class BaseManager {
     );
   }
 
-  protected async get(urlString: string): Promise<any> {
+  protected async get<T>(urlString: string): Promise<T> {
     const url = new URL(urlString);
 
     const apiRequest = this.buildRequestObject({
@@ -97,12 +97,12 @@ class BaseManager {
     });
 
     const apiResponse = await fetch(apiRequest);
-    const response = await this.processApiResponse(urlString, apiResponse);
+    const response = await this.processApiResponse<T>(urlString, apiResponse);
 
     return response;
   }
 
-  protected async put(urlString: string, payload: IKeyValue): Promise<any> {
+  protected async put<T>(urlString: string, payload: IKeyValue): Promise<T> {
     const url = new URL(urlString);
 
     const apiRequest = this.buildRequestObject({
@@ -112,12 +112,12 @@ class BaseManager {
     });
 
     const apiResponse = await fetch(apiRequest);
-    const response = await this.processApiResponse(urlString, apiResponse);
+    const response = await this.processApiResponse<T>(urlString, apiResponse);
 
     return response;
   }
 
-  protected async post(urlString: string, payload: IKeyValue): Promise<any> {
+  protected async post<T>(urlString: string, payload: IKeyValue): Promise<T> {
     const url = new URL(urlString);
 
     const apiRequest = this.buildRequestObject({
@@ -127,12 +127,12 @@ class BaseManager {
     });
 
     const apiResponse = await fetch(apiRequest);
-    const response = await this.processApiResponse(urlString, apiResponse);
+    const response = await this.processApiResponse<T>(urlString, apiResponse);
 
     return response;
   }
 
-  protected async delete(urlString: string): Promise<any> {
+  protected async delete<T>(urlString: string): Promise<T> {
     const url = new URL(urlString);
 
     const apiRequest = this.buildRequestObject({
@@ -141,7 +141,7 @@ class BaseManager {
     });
 
     const apiResponse = await fetch(apiRequest);
-    const response = await this.processApiResponse(urlString, apiResponse);
+    const response = await this.processApiResponse<T>(urlString, apiResponse);
 
     return response;
   }

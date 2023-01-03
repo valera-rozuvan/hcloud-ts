@@ -80,48 +80,44 @@ interface IRecord {
   modified: string;
 }
 
-interface IRecordsResponse {
-  records: Array<IRecord>;
-}
-
 class RecordManager extends BaseManager {
   constructor(apiToken: string) {
     super(apiToken);
   }
 
-  public async getAll(zoneId: string): Promise<IRecordsResponse> {
+  public async getAll(zoneId: string): Promise<{ records: Array<IRecord> }> {
     const urlString = `https://dns.hetzner.com/api/v1/records?zone_id=${zoneId}`;
-    const response = await this.get(urlString);
+    const response = await this.get<{ records: Array<IRecord> }>(urlString);
     this.validate(urlString, response, GetRecordsResponse);
-    return response as IRecordsResponse;
+    return response;
   }
 
   public async getOne(recordID: string): Promise<IRecord> {
     const urlString = `https://dns.hetzner.com/api/v1/records/${recordID}`;
-    const response = await this.get(urlString);
+    const response = await this.get<{ record: IRecord }>(urlString);
     this.validate(urlString, response, GetRecordResponse);
-    return response.record as IRecord;
+    return response.record;
   }
 
   public async update(recordID: string, payload: IKeyValue): Promise<IRecord> {
     const record = await this.getOne(recordID);
 
     const urlString = `https://dns.hetzner.com/api/v1/records/${recordID}`;
-    const response = await this.put(urlString, { ...record, ...payload });
+    const response = await this.put<{ record: IRecord }>(urlString, { ...record, ...payload });
     this.validate(urlString, response, GetRecordResponse);
-    return response.record as IRecord;
+    return response.record;
   }
 
-  public async create(recordID: string, payload: IKeyValue): Promise<IRecord> {
+  public async create(payload: IKeyValue): Promise<IRecord> {
     const urlString = 'https://dns.hetzner.com/api/v1/records';
-    const response = await this.post(urlString, payload);
+    const response = await this.post<{ record: IRecord }>(urlString, payload);
     this.validate(urlString, response, GetRecordResponse);
-    return response.record as IRecord;
+    return response.record;
   }
 
   public async remove(recordID: string): Promise<void> {
     const urlString = `https://dns.hetzner.com/api/v1/records/${recordID}`;
-    const response = await this.delete(urlString);
+    const response = await this.delete<{ error: { [key: string]: any } }>(urlString);
     this.validate(urlString, response, DeleteRecordResponse);
   }
 }
