@@ -14,7 +14,10 @@ async function run(): Promise<any> {
     updateData: {},
   };
 
+  // Get API token from the ENV variables.
   setConfigApiToken(process.env, cliConfig);
+
+  // Get configuration from command line arguments.
   setConfigEntity(process.argv, cliConfig);
   setConfigMode(process.argv, cliConfig);
   setConfigZoneId(process.argv, cliConfig);
