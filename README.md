@@ -17,7 +17,11 @@ Where `8try83ru3908ru329r32ur390ru` is the value of `HETZNER_API_TOKEN`.
 General invocation of the CLI tool:
 
 ```shell
-npx ts-node ./index.ts {{entity option}} {{mode option}} {{optional - resource ID}} {{optional - data to set}}
+npx ts-node ./index.ts \
+  {{entity option}} \
+  {{mode option}} \
+  {{optional - resource ID}} \
+  {{optional - data to set}}
 ```
 
 Available arguments for the CLI:
@@ -62,8 +66,14 @@ optional - data to set:
 Example of how to run the CLI:
 
 ```shell
-npx ts-node ./index.ts --record --update --record-id "fc249227f4ae170dafa99394971da92b" --set-name "orgid-v2"
+npx ts-node ./index.ts \
+  --record \
+  --update \
+  --record-id "fc249227f4ae170dafa99394971da92b" \
+  --set-name "orgid-v2"
 ```
+
+The above command will update the zone record with ID `fc249227f4ae170dafa99394971da92b`. It will set the `name` property of that record to the value `orgid-v2`.
 
 ---
 
