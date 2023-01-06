@@ -8,8 +8,16 @@ import { ApiCallOptions, IKeyValue } from '../types';
 class BaseManager {
   private readonly apiToken: string;
 
-  constructor(apiToken: string) {
+  protected apiBaseUrl = '';
+
+  constructor(apiToken: string, apiBaseUrl?: string) {
     this.apiToken = apiToken;
+
+    if (typeof apiBaseUrl === 'string') {
+      this.apiBaseUrl = apiBaseUrl;
+    } else {
+      apiBaseUrl = 'https://dns.hetzner.com';
+    }
   }
 
   private async processApiResponse<T>(urlString: string, apiResponse: Response): Promise<T> {

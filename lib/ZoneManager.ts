@@ -238,19 +238,19 @@ interface IZonesResponse {
 }
 
 class ZoneManager extends BaseManager {
-  constructor(apiToken: string) {
-    super(apiToken);
+  constructor(apiToken: string, apiBaseUrl?: string) {
+    super(apiToken, apiBaseUrl);
   }
 
   public async getAll(): Promise<IZonesResponse> {
-    const urlString = 'https://dns.hetzner.com/api/v1/zones';
+    const urlString = `${this.apiBaseUrl}/api/v1/zones`;
     const response = await this.get(urlString);
     this.validate(urlString, response, GetZonesResponse);
     return response as IZonesResponse;
   }
 
   public async getOne(zoneId: string): Promise<IZone> {
-    const urlString = `https://dns.hetzner.com/api/v1/zones/${zoneId}`;
+    const urlString = `${this.apiBaseUrl}/api/v1/zones/${zoneId}`;
     const response = await this.get(urlString);
     this.validate(urlString, response, GetZoneResponse);
     return response as IZone;

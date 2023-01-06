@@ -17,6 +17,7 @@ interface IKeyValue {
 
 interface ICliConfig {
   apiToken: string;
+  apiBaseUrl?: string;
   entity: ECliConfigEntity | null;
   mode: ECliConfigMode | null;
   zoneId: string;

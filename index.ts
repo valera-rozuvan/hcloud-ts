@@ -1,6 +1,12 @@
 import { RecordManager, ZoneManager } from './lib';
 import {
-  setConfigApiToken, setConfigEntity, setConfigMode, setConfigZoneId, setConfigRecordId, setConfigUpdateData,
+  setConfigApiToken,
+  setConfigApiBaseUrl,
+  setConfigEntity,
+  setConfigMode,
+  setConfigZoneId,
+  setConfigRecordId,
+  setConfigUpdateData,
 } from './utils';
 import { ECliConfigEntity, ECliConfigMode, ICliConfig } from './types';
 
@@ -14,8 +20,9 @@ async function run(): Promise<any> {
     updateData: {},
   };
 
-  // Get API token from the ENV variables.
+  // Get API token, and API base URL (if provided), from the ENV variables.
   setConfigApiToken(process.env, cliConfig);
+  setConfigApiBaseUrl(process.env, cliConfig);
 
   // Get configuration from command line arguments.
   setConfigEntity(process.argv, cliConfig);
@@ -30,7 +37,7 @@ async function run(): Promise<any> {
 
   switch (cliConfig.entity) {
     case ECliConfigEntity.Zone:
-      manager = new ZoneManager(cliConfig.apiToken);
+      manager = new ZoneManager(cliConfig.apiToken, cliConfig.apiBaseUrl);
 
       switch (cliConfig.mode) {
         case ECliConfigMode.GetAll:
@@ -54,7 +61,7 @@ async function run(): Promise<any> {
 
       break;
     case ECliConfigEntity.Record:
-      manager = new RecordManager(cliConfig.apiToken);
+      manager = new RecordManager(cliConfig.apiToken, cliConfig.apiBaseUrl);
 
       switch (cliConfig.mode) {
         case ECliConfigMode.GetAll:
@@ -99,8 +106,9 @@ async function run(): Promise<any> {
       }
 
       break;
+    case null:
     default:
-      break;
+      throw new Error('No valid entity argument provided!');
   }
 
   return result;
@@ -110,6 +118,7 @@ run().then((result) => {
   console.log(JSON.stringify(result));
   process.exit(0);
 }).catch((err) => {
-  console.log(err.message);
+  console.error('Application caught an exception!');
+  console.error(err.message);
   process.exit(1);
 });

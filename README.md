@@ -75,6 +75,16 @@ npx ts-node ./index.ts \
 
 The above command will update the zone record with ID `fc249227f4ae170dafa99394971da92b`. It will set the `name` property of that record to the value `orgid-v2`.
 
+## debugging
+
+For debugging purposes, you may wish to use a mock server. This way the CLI will not access the actual HETZNER API, but your own local mock server. You can achieve this by setting a custom API base URL address. Just export the environment variable `HETZNER_API_BASE_URL` like so:
+
+```shell
+export HETZNER_API_BASE_URL="http://localhost:8000"
+```
+
+Make sure your mock server is listening on port `8000`.
+
 ---
 
 ## license
