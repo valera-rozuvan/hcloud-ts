@@ -2,6 +2,10 @@
 
 a TypeScript library for the Hetzner Cloud API
 
+## project status
+
+This is still very much in progress. A lot of the Hetzner API calls are yet to be implemented. Stay tuned ;)
+
 ## prerequisites
 
 You need ENV variable `HETZNER_API_TOKEN` set. You can do so:
