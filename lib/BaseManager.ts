@@ -5,6 +5,17 @@ import fetch, {
 import { URL } from 'url';
 import { ApiCallOptions, IKeyValue } from '../types';
 
+const DEFAULT_HETZNER_API_URL = 'https://dns.hetzner.com';
+
+interface IResponseErrorPayload {
+  message?: string;
+  code?: string | number;
+}
+
+interface IResponseError {
+  error?: IResponseErrorPayload;
+}
+
 class BaseManager {
   private readonly apiToken: string;
 
@@ -13,10 +24,10 @@ class BaseManager {
   constructor(apiToken: string, apiBaseUrl?: string) {
     this.apiToken = apiToken;
 
-    if (typeof apiBaseUrl === 'string') {
+    if (typeof apiBaseUrl === 'string' && apiBaseUrl.length > 0) {
       this.apiBaseUrl = apiBaseUrl;
     } else {
-      apiBaseUrl = 'https://dns.hetzner.com';
+      this.apiBaseUrl = DEFAULT_HETZNER_API_URL;
     }
   }
 
@@ -59,13 +70,14 @@ class BaseManager {
       );
     }
 
-    if (response.error && (response.error.message || response.error.code)) {
+    const responseErr = response as IResponseError;
+    if (responseErr.error && (responseErr.error.message || responseErr.error.code)) {
       throw new Error(
         'API response contains an error payload; '
         + `urlString is '${urlString}'; `
         + `status is '${apiResponse.status}'; `
         + `statusText is '${apiResponse.statusText}'; `
-        + `the error payload is '${JSON.stringify(response.error)}'.`,
+        + `the error payload is '${JSON.stringify(responseErr.error)}'.`,
       );
     }
 

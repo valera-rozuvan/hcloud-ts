@@ -21,7 +21,7 @@ Where `8try83ru3908ru329r32ur390ru` is the value of `HETZNER_API_TOKEN`.
 General invocation of the CLI tool:
 
 ```shell
-npx ts-node ./index.ts \
+npx tsx ./index.ts \
   {{entity option}} \
   {{mode option}} \
   {{optional - resource ID}} \
@@ -70,7 +70,7 @@ optional - data to set:
 Example of how to run the CLI:
 
 ```shell
-npx ts-node ./index.ts \
+npx tsx ./index.ts \
   --record \
   --update \
   --record-id "fc249227f4ae170dafa99394971da92b" \
