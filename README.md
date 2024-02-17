@@ -6,6 +6,11 @@ a TypeScript library for the Hetzner Cloud API
 
 This is still very much in progress. A lot of the Hetzner API calls are yet to be implemented. Stay tuned ;)
 
+More precisely, the following entities are available to work with ATM:
+
+- zones
+- records
+
 ## prerequisites
 
 You need ENV variable `HETZNER_API_TOKEN` set. You can do so:
