@@ -1,6 +1,6 @@
 {
   "name": "htz-dns-manager",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "HTZ DNS manager",
   "main": "index.js",
   "scripts": {
